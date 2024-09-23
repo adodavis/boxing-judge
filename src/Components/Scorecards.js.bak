@@ -1,0 +1,67 @@
+// Scorecards.js
+
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useData } from "./DataContext";
+import "../App.css";
+
+function AddFight() {
+    const navigate = useNavigate();
+
+    const addFightView = () => {
+        navigate('/addfight');
+    }
+
+    return (
+        <div>
+            <button onClick={addFightView}>Add Fight</button>
+        </div>
+    );
+}
+
+function Scorecards() {
+    const { setFightData } = useData();
+    const [scorecards, setScorecards] = useState([]);
+    const navigate = useNavigate();
+
+    // Load scorecards from localStorage when the component mounts
+    useEffect(() => {
+        const savedScorecards = localStorage.getItem('scorecards');
+        
+        if (savedScorecards) {
+            setScorecards(JSON.parse(savedScorecards));
+        }
+    }, []);
+
+    // Save scorecards to localStorage whenever the list changes
+    useEffect(() => {
+        if (scorecards.length > 0) {
+            localStorage.setItem('scorecards', JSON.stringify(scorecards));
+        }
+    }, [scorecards]);
+
+    const scorecardView = (fightData) => {
+        setFightData(fightData); // Set the selected fight data in context
+        navigate('/scorecard');
+    }
+
+    return (
+        <div>
+            <h1>Scorecards</h1>
+            {scorecards.length > 0 ? (
+                scorecards.map((card, index) => (
+                    <div key={index} onClick={() => scorecardView(card)}>
+                        <p>{card.fighterA} vs. {card.fighterB}</p>
+                        <p>{card.rounds} Rounds</p>
+                        <p>{card.date}</p>
+                    </div>
+                ))
+            ) : (
+                <p>No scorecards available.</p>
+            )}
+            <AddFight />
+        </div>
+    );
+}
+
+export default Scorecards;

@@ -1,0 +1,384 @@
+// Scorecard.js
+
+import React, { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { useData } from "./DataContext";
+import { ReactComponent as NoteIcon }  from './note-icon.svg';
+import { debounce } from 'lodash';
+import "../App.css";
+
+const ScoreInput = ({ fighterName, score, onScoreChange, roundIndex }) => (
+    <label className="score-input">
+        <select value={score} onChange={(e) => onScoreChange(roundIndex, fighterName, Number(e.target.value))}>
+            <option value="">-</option>
+            <option value="10">10</option>
+            <option value="9">9</option>
+            <option value="8">8</option>
+            <option value="7">7</option>
+            <option value="6">6</option>
+        </select>
+    </label>
+);
+
+const NoteButton = ({ onOpenNoteForm }) => (
+    <button 
+        className="note-button"
+        onClick={onOpenNoteForm}
+        onMouseEnter={(e) => (e.currentTarget.style.opacity = 1)}
+        onMouseLeave={(e) => (e.currentTarget.style.opacity = 0.5)}
+        >
+            <NoteIcon style={{ width: '24px', height: '24px', fill: 'currentColor' }} />
+    </button>
+);
+
+const CloseRoundButton = ({ isClose, onToggleClose, roundIndex }) => (
+    <button
+        className="close-round-button"
+        onClick={() => onToggleClose(roundIndex)}
+        style={{ backgroundColor: isClose ? 'red': 'gray', color: 'white',
+                 opacity: isClose ? 0.8 : 0.1
+        }}
+    > 
+        {isClose ? 'Close': '-'}
+    </button>
+);
+
+function Scorecard() {
+   const { fightData, setFightData } = useData();
+   const [roundNotes, setRoundNotes] = useState([]);
+   const [roundClose, setRoundClose] = useState([]);
+   const [showNotePopup, setShowNotePopup] = useState(false);
+   const [currentRoundIndex, setCurrentRoundIndex] = useState(null);
+   const [noteInputValue, setNoteInputValue] = useState("");
+   const [showOutcomePopup, setShowOutcomePopup] = useState(false);
+   const [selectedOutcome, setSelectedOutcome] = useState('');
+   const [showWinnerPopup, setShowWinnerPopup] = useState(false);
+   const [winnerSelected, setWinnerSelected] = useState(false);
+   const [selectedWinner, setSelectedWinner] = useState('');
+   const [winnerDisplay, setWinnerDisplay] = useState('');
+   const navigate = useNavigate();
+
+   useEffect(() => {
+        if (!fightData || !fightData.rounds) {
+            console.error("Fight data or rounds are not available.");
+            return;
+        }
+
+        const defaultScores = Array(parseInt(fightData.rounds, 10)).fill({ fighterA: 0, fighterB: 0 });
+        const defaultNotes = Array(parseInt(fightData.rounds, 10)).fill('');
+        const defaultCloseRounds = Array(parseInt(fightData.rounds, 10)).fill(false);
+    
+        // Load and parse the saved data with error handling
+        const savedScores = localStorage.getItem(`fight-${fightData.id}-scores`);
+        const savedNotes = localStorage.getItem(`fight-${fightData.id}-notes`);
+        const savedCloseRounds = localStorage.getItem(`fight-${fightData.id}-close`);
+
+        try {
+            const parsedScores = savedScores ? JSON.parse(savedScores) : defaultScores;
+            const parsedNotes = savedNotes ? JSON.parse(savedNotes) : defaultNotes;
+            const parsedCloseRounds = savedCloseRounds ? JSON.parse(savedCloseRounds) : defaultCloseRounds;
+
+            // Initialize roundNotes and roundClose
+            if (JSON.stringify(fightData.roundScores) !== JSON.stringify(parsedScores)) {
+                setFightData(prevData => ({
+                    ...prevData,
+                    roundScores: parsedScores
+                }));
+            }
+            if (JSON.stringify(roundNotes) !== JSON.stringify(parsedNotes)) {
+                setRoundNotes(parsedNotes);
+            }
+            if (JSON.stringify(roundClose) !== JSON.stringify(parsedCloseRounds)) {
+                setRoundClose(parsedCloseRounds);
+            }
+        } catch (error) {
+            console.error("Error parsing saved data:", error);
+            setFightData(prevData => ({
+                ...prevData,
+                roundScores: defaultScores
+            }));
+            setRoundNotes(defaultNotes);
+            setRoundClose(defaultCloseRounds);
+        }
+   }, [fightData]); // Only trigger when fightData changes
+
+   // Save data to localStorage and DataContext after it's updated
+   useEffect(() => {
+        if (fightData && fightData.id && fightData.roundScores) {
+            const updatedFightData = {
+                ...fightData,
+                roundScores: fightData.roundScores,
+                roundNotes: roundNotes,
+                roundClose: roundClose
+            };
+
+            // Deep comparison to avoid unnecessary re-renders
+            if (JSON.stringify(fightData) !== JSON.stringify(updatedFightData)) {
+                setFightData(updatedFightData);
+            }
+
+            // Throttle localStorage updates to avoid excessive writes
+            const saveToLocalStorage = () => {
+                localStorage.setItem(`fight-${fightData.id}-scores`, JSON.stringify(fightData.roundScores));
+                localStorage.setItem(`fight-${fightData.id}-notes`, JSON.stringify(roundNotes));
+                localStorage.setItem(`fight-${fightData.id}-close`, JSON.stringify(roundClose));
+            }
+
+            // Use debounce if necessary to avoid excessive localStorage writes
+            const debounceSave = debounce(saveToLocalStorage, 500);
+            debounceSave();
+        }
+   }, [fightData.roundScores, roundNotes, roundClose, fightData, setFightData]);
+
+   // Calculate total scores whenever roundScores change
+   useEffect(() => {
+       if (fightData && fightData.roundScores && fightData.roundScores.length > 0) {
+           const fighterAScores = fightData.roundScores.map(score => score.fighterA);
+           const totalA = fighterAScores.reduce((total, num) => total + num, 0);
+
+           const fighterBScores = fightData.roundScores.map(score => score.fighterB);
+           const totalB = fighterBScores.reduce((total, num) => total + num, 0);
+
+           // Update the total scores in DataContext only if they've changed
+           if (fightData.fighterATotalScore !== totalA || fightData.fighterBTotalScore !== totalB) {
+                setFightData(prevData => ({
+                    ...prevData,
+                    fighterATotalScore: totalA,
+                    fighterBTotalScore: totalB
+            }));
+           }
+       }        
+   }, [fightData.roundScores, fightData, setFightData]);
+
+   const handleScoreChange = (roundIndex, fighter, score) => {
+        setFightData(prevData => {
+            const updatedScores = prevData.roundScores.map((round, index) =>
+                index === roundIndex
+                    ? {...round, [fighter]: score }
+                    : round
+            );
+
+            // Log the updated roundScores to inspect after the change
+            console.log("Updated roundScores:", updatedScores);
+
+            return {
+                ...prevData,
+                roundScores: updatedScores
+            }
+        });
+   };
+
+   const handleToggleClose = (roundIndex) => {
+        const updatedCloseRounds = [...roundClose];
+        updatedCloseRounds[roundIndex] = !updatedCloseRounds[roundIndex];
+        setRoundClose(updatedCloseRounds);
+   }
+
+   const handleOpenNoteForm = (roundIndex) => {
+        setCurrentRoundIndex(roundIndex);
+        setNoteInputValue(roundNotes[roundIndex]);
+        setShowNotePopup(true);
+   }
+
+   const handleNoteChange = (e) => {
+        setNoteInputValue(e.target.value);
+   }
+
+   const handleSaveNote = () => {
+        const updatedNotes = [...roundNotes];
+        updatedNotes[currentRoundIndex] = noteInputValue;
+        setRoundNotes(updatedNotes);
+        setShowNotePopup(false);
+   }
+
+   const handleCloseNotePopup = () => {
+        setShowNotePopup(false);
+   }
+
+   const handleOutcomeChange = (outcome) => {
+        setSelectedOutcome(outcome);
+
+        // If a winner is already selected, update the winnerDisplay with the new outcome
+        if (selectedWinner) {
+            const winnerText = selectedWinner === fightData.fighterA
+                ? `${fightData.fighterA} ${outcome} ${fightData.fighterB}`
+                : `${fightData.fighterB} ${outcome} ${fightData.fighterA}`;
+            
+            setWinnerDisplay(winnerText);
+
+            const updatedFightData = {
+                ...fightData,
+                outcome: outcome,
+                winnerDisplay: winnerText
+            }
+            setFightData(updatedFightData);
+            localStorage.setItem(`fight-${fightData.id}`, JSON.stringify(updatedFightData));
+        }
+
+        // Show the winner if it's a fight-ending outcome
+        if (["KO", "TKO", "Referee Technical Decision", "Technical Decision"].includes(outcome)) {
+            setShowWinnerPopup(true);
+        }
+        else {
+            setShowWinnerPopup(false);
+        }
+   };
+
+   const handleWinnerChange = (winner) => {
+        setSelectedWinner(winner);
+        
+        const winnerText = winner === fightData.fighterA
+            ? `${fightData.fighterA} ${selectedOutcome} ${fightData.fighterB}`
+            : `${fightData.fighterB} ${selectedOutcome} ${fightData.fighterA}`;
+        
+        setWinnerDisplay(winnerText);
+
+        const updatedFightData = {
+            ...fightData,
+            winner: winner,
+            outcome: selectedOutcome,
+            winnerDisplay: winnerText
+        }
+
+        // Save the updated data in DataContext and localStorage
+        setFightData(updatedFightData);
+        localStorage.setItem(`fight-${fightData.id}`, JSON.stringify(updatedFightData));
+
+        setWinnerSelected(true);
+        setShowOutcomePopup(false);
+        setShowWinnerPopup(false);
+   }
+
+   const isPreviousRoundScored = (roundIndex) => {
+        /* if (roundIndex === 0) {
+            return true;
+        }
+            return roundScores[roundIndex - 1].fighterA > 0 && roundScores[roundIndex - 1].fighterB > 0; */
+            return roundIndex === 0 || (fightData.roundScores[roundIndex - 1] && fightData.roundScores[roundIndex - 1].fighterA !== undefined && fightData.roundScores[roundIndex - 1].fighterB !== undefined);
+    };
+
+   const returnToScorecards = () => {
+        if (fightData && fightData.id) {
+            // Ensure the fightData object is updated
+            const updatedFightData = {
+                ...fightData,
+                roundScores: fightData.roundScores,
+                totalScores: {
+                    fighterA: fightData.roundScores.reduce((total, score) => total + score.fighterA, 0),
+                    fighterB: fightData.roundScores.reduce((total, score) => total + score.fighterB, 0),
+                },
+                winnerSelected: winnerSelected,
+                winnerDisplay: winnerDisplay
+            };
+
+            // Update the DataContext
+            setFightData(updatedFightData) // set the current fight data before navigating back to scorecard list
+
+            // Save to localStorage
+            localStorage.setItem(`fight-${fightData.id}`, JSON.stringify(updatedFightData));
+        }
+        navigate(-1);
+   };
+
+   if (!fightData || fightData.roundScores.length !== parseInt(fightData.rounds, 10)) {
+    return <p>Loading fight data...</p>;
+   }
+    
+    return (
+        <div className="scorecard-page-container">
+            <div className="fighters-info-container" style={{ color: "white"}}>
+                <h2>{fightData.fighterA} vs. {fightData.fighterB}</h2>
+            </div>
+
+            {fightData.roundScores.map((score, index) => (
+                    <div key={index}>
+                        {isPreviousRoundScored(index) && (
+                            <div className="score-input-container">
+                                <div className="score-row">
+                                    <ScoreInput
+                                        fighterName={fightData.fighterA}
+                                        score={score.fighterA}
+                                        onScoreChange={handleScoreChange}
+                                        roundIndex={index}
+                                        className="score-input"
+                                    />
+                                    <label className="round-label" style={{ fontWeight: "bold", margin: "0 10px" }}>Round {index + 1}</label>
+                                    <ScoreInput
+                                        fighterName={fightData.fighterB}
+                                        score={score.fighterB}
+                                        onScoreChange={handleScoreChange}
+                                        roundIndex={index}
+                                        className="score-input"
+                                    />
+                                </div>
+                                <div className="button-container">
+                                    <NoteButton onOpenNoteForm={() => handleOpenNoteForm(index)} />
+                                    <CloseRoundButton
+                                        isClose={roundClose[index]}
+                                        onToggleClose={handleToggleClose}
+                                        roundIndex={index}
+                                    />
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                ))}
+
+                { winnerSelected && (
+                    <div className="winner-container">
+                        {winnerDisplay}
+                    </div>
+                )}
+
+                <div className="total-score-container">
+                    <label style={{ fontWeight: "bold", color: "white" }}>{fightData.fighterATotalScore}-{fightData.fighterBTotalScore}</label>
+                </div>
+        
+            <button onClick={returnToScorecards}>Back</button>
+            <button onClick={() => setShowOutcomePopup(true)}>End Fight</button>
+
+            { showNotePopup && (
+                <div className="notes-popup">
+                    <h2>Round {currentRoundIndex + 1} Notes</h2>
+                    <textarea
+                        value={noteInputValue}
+                        onChange={handleNoteChange}
+                        placeholder="Enter your notes here."
+                    />
+                    <br />
+                    <button onClick={handleSaveNote}>Save</button>
+                    <button onClick={handleCloseNotePopup}>Close</button>
+                </div>
+            )}
+
+            {showOutcomePopup && (
+                <div className="outcome-popup">
+                    <h2>Select Fight Outcome</h2>
+                    <select onChange={(e) => handleOutcomeChange(e.target.value)}>
+                        <option value="">How did the fight end?</option>
+                        <option value="KO">KO</option>
+                        <option value="TKO">TKO</option>
+                        <option value="RTD">Referee Technical Decision</option>
+                        <option value="TD">Technical Decision</option>
+                        <option value="NC">No Contest</option>
+                    </select>
+                    <button onClick={() => setShowOutcomePopup(false)}>Close</button>
+                </div>
+            )}
+
+            {showWinnerPopup && (
+                <div className="winner-popup">
+                    <h2>Who Won?</h2>
+                    <select onChange={(e) => handleWinnerChange(e.target.value)}>
+                        <option value="">Select a winner</option>
+                        <option value={fightData.fighterA}>{fightData.fighterA}</option>
+                        <option value={fightData.fighterB}>{fightData.fighterB}</option>
+                    </select>
+                    <button onClick={() => setShowWinnerPopup(false)}>Close</button>
+                </div>
+            )}
+        </div>
+    );
+}
+
+export default Scorecard;
