@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/boxing-scorecard/static/css/main.6c2d0b4f.css",
-    "main.js": "/boxing-scorecard/static/js/main.e3d4e723.js",
-    "static/media/note-icon.svg": "/boxing-scorecard/static/media/note-icon.0d636fdaf07d826d02acbda9ad2b0a44.svg",
-    "static/media/export-icon.svg": "/boxing-scorecard/static/media/export-icon.6266865c127444ca9ffbd79dfbe52d57.svg",
-    "index.html": "/boxing-scorecard/index.html",
-    "static/media/search-icon.svg": "/boxing-scorecard/static/media/search-icon.4538c67591d20f5f18238cbcfcfc24a0.svg",
-    "main.6c2d0b4f.css.map": "/boxing-scorecard/static/css/main.6c2d0b4f.css.map",
-    "main.e3d4e723.js.map": "/boxing-scorecard/static/js/main.e3d4e723.js.map"
+    "main.css": "/boxing-judge/static/css/main.6c2d0b4f.css",
+    "main.js": "/boxing-judge/static/js/main.1fcc4f9e.js",
+    "static/media/note-icon.svg": "/boxing-judge/static/media/note-icon.0d636fdaf07d826d02acbda9ad2b0a44.svg",
+    "static/media/export-icon.svg": "/boxing-judge/static/media/export-icon.6266865c127444ca9ffbd79dfbe52d57.svg",
+    "index.html": "/boxing-judge/index.html",
+    "static/media/search-icon.svg": "/boxing-judge/static/media/search-icon.4538c67591d20f5f18238cbcfcfc24a0.svg",
+    "main.6c2d0b4f.css.map": "/boxing-judge/static/css/main.6c2d0b4f.css.map",
+    "main.1fcc4f9e.js.map": "/boxing-judge/static/js/main.1fcc4f9e.js.map"
   },
   "entrypoints": [
     "static/css/main.6c2d0b4f.css",
-    "static/js/main.e3d4e723.js"
+    "static/js/main.1fcc4f9e.js"
   ]
 }
