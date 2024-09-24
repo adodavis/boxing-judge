@@ -294,7 +294,7 @@ function Scorecard() {
 
                 }
                 <div className="back-btn">
-                    <button onClick={returnToScorecards}>X</button>
+                    <button onClick={returnToScorecards}>&lt; Back</button>
                 </div>
                 <div className="end-fight-btn">
                     <button onClick={() => setShowOutcomePopup(true)}>End Fight</button>
