@@ -12,17 +12,13 @@ import './App.css';
 // Create a new context and export
 export const NameContext = createContext();
 
-// Create a context provider
-
-
-
 function App() {
   return (
     <div>
       <Router>
         <DataProvider>
           <Routes>
-            <Route path="/" element={<Scorecards />} />
+            <Route path="/boxing-judge" element={<Scorecards />} />
             <Route path="/scorecard" element={<Scorecard />}  />
           </Routes>
         </DataProvider>

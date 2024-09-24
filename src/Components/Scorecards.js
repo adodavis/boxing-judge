@@ -13,7 +13,7 @@ const ResultDisplay = ({ totalScoreA, totalScoreB, outcome, roundScores, rounds 
         roundScores.every(round => round.fighterA !== 0 && round.fighterB !== 0);
 
     
-    if (["KO", "TKO", "RTD", "TD"].includes(outcome)) {
+    if (["KO", "TKO", "RTD", "TD", "DQ"].includes(outcome)) {
             return (
                 <div>
                     <p>Result: {outcome}</p>
@@ -151,7 +151,6 @@ function Scorecards() {
     }
 
     const scorecardView = (card) => {
-        console.log('Navigating to scorecard:', card);
         setFightData(card); // Set the current fight data before navigating
         navigate('/scorecard');
     }

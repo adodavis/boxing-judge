@@ -71,7 +71,6 @@ function Scorecard() {
            const savedOutcome = localStorage.getItem(`fight-${fightData.id}-outcome`);
            
            if (savedScores && JSON.parse(savedScores).length > 0) {
-                console.log('Saved roundScores:', JSON.parse(savedScores));
                setFightData(prev => ({
                     ...prev,
                     roundScores: JSON.parse(savedScores)
@@ -128,8 +127,6 @@ function Scorecard() {
         const totalScoreA = roundScores.reduce((acc, round) => acc + round.fighterA, 0);
         const totalScoreB = roundScores.reduce((acc, round) => acc + round.fighterB, 0);
 
-        console.log('Updated total scores:', totalScoreA, totalScoreB);
-
         // Update fightData with the latest total scores
             setFightData(prev => ({
             ...prev,
@@ -140,7 +137,6 @@ function Scorecard() {
    }, [roundScores, setFightData]);     // Ensure this runs whenever roundScores change
 
    const handleScoreChange = (roundIndex, fighter, score) => {
-        console.log(`Updating score for ${fighter} in round ${roundIndex  + 1} to ${score}`);
         const updatedScores = [...roundScores];
 
         // Update the existing key for the specific fighter
@@ -151,13 +147,13 @@ function Scorecard() {
             updatedScores[roundIndex] = {...updatedScores[roundIndex], fighterB: score};
         }
 
-        console.log("Setting new roundScores:", updatedScores);
-
-        // Update fightData with new roundScores
+        // Update fightData with new roundScores, clears outcome and winnerDisplay
         setFightData(prev => ({
             ...prev,
-            roundScores: updatedScores
+            roundScores: updatedScores,
+            outcome: ""
         }));
+        setWinnerDisplay("");
    };
 
 
@@ -204,7 +200,7 @@ function Scorecard() {
         }
 
         // Show the winner if it's a fight-ending outcome
-        if (["KO", "TKO", "Referee Technical Decision", "Technical Decision"].includes(newOutcome)) {
+        if (["KO", "TKO", "RTD", "TD", "DQ"].includes(newOutcome)) {
             setShowWinnerPopup(true);
         }
         else {
@@ -213,7 +209,7 @@ function Scorecard() {
    };
 
    const handleWinnerChange = (winner) => {
-        if (selectedWinner !== winner) {
+        if (selectedWinner !== winner || winnerDisplay  === "") {
             setSelectedWinner(winner);
             const winnerText = winner === fighterA
             ? `${fighterA} ${outcome} ${fighterB}`
@@ -234,7 +230,6 @@ function Scorecard() {
     };
 
    const returnToScorecards = () => {
-        
         setFightData(fightData) // set the current fight data before navigating back to scorecard list
         navigate(-1);
    };
@@ -328,6 +323,7 @@ function Scorecard() {
                         <option value="TKO">TKO</option>
                         <option value="RTD">Referee Technical Decision</option>
                         <option value="TD">Technical Decision</option>
+                        <option value="DQ">Disqualification</option>
                         <option value="NC">No Contest</option>
                     </select>
                     <button onClick={() => setShowOutcomePopup(false)}>Close</button>
