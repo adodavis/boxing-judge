@@ -199,6 +199,11 @@ function Scorecard() {
             setWinnerDisplay(winnerText);
         }
 
+        if (newOutcome === "NC") {
+            setWinnerDisplay("No Contest");
+            console.log('Winner Display:', winnerDisplay);
+        }
+
         // Show the winner if it's a fight-ending outcome
         if (["KO", "TKO", "RTD", "TD", "DQ"].includes(newOutcome)) {
             setShowWinnerPopup(true);

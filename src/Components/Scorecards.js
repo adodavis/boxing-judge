@@ -13,7 +13,7 @@ const ResultDisplay = ({ totalScoreA, totalScoreB, outcome, roundScores, rounds 
         roundScores.every(round => round.fighterA !== 0 && round.fighterB !== 0);
 
     
-    if (["KO", "TKO", "RTD", "TD", "DQ"].includes(outcome)) {
+    if (["KO", "TKO", "RTD", "TD", "DQ", "NC"].includes(outcome)) {
             return (
                 <div>
                     <p>Result: {outcome}</p>

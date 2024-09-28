@@ -348,7 +348,8 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: white;
+    background-color: rgb(39, 37, 37);
+    color: gray;
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 8px;
