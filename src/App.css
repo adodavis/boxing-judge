@@ -224,6 +224,10 @@
     outline: none;
 }
 
+.back-btn:hover button {
+    text-decoration: underline;
+}
+
 .score-input-container {
     border: 2px solid rgba(128, 128, 128, 0.527);
     width: 250px;
