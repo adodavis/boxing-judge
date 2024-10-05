@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useData } from "./DataContext";
 import { ReactComponent as SearchIcon } from "./search-icon.svg"
 import { ReactComponent as ExportIcon } from "./export-icon.svg"
+import ChampionshipIcon from "./championship-icon.png"
 import "../App.css";
 
 const ResultDisplay = ({ totalScoreA, totalScoreB, outcome, roundScores, rounds }) => {
@@ -29,6 +30,18 @@ const ResultDisplay = ({ totalScoreA, totalScoreB, outcome, roundScores, rounds 
     }
 }
 
+const ChampionshipDisplay = ({ isChampionship }) => {
+    if (isChampionship === "true")
+    {
+        return (
+            <span>
+                <img src={ChampionshipIcon} alt="Championship" className="championship-icon" />
+            </span>
+        );
+    }
+    return null;
+}
+
 const getCurrentDate = () => {
     const today = new Date();
     const year = today.getFullYear();
@@ -47,6 +60,7 @@ function Scorecards() {
     const [showAddFightPopup, setShowAddFightPopup] = useState(false);
     const [showSearchBar, setshowSearchBar] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
+    const [championship, setChampionship] = useState('');
     const navigate = useNavigate();
 
     // Load scorecards from localStorage when the component mounts
@@ -125,6 +139,7 @@ function Scorecards() {
             alert('Please enter all fields');
             return;
         }
+
         setShowAddFightPopup(false);
 
         const id = Date.now().toString(); // Generate a unique ID using the current timestamp
@@ -137,6 +152,7 @@ function Scorecards() {
             fighterB,
             rounds,
             date,
+            championship,
             outcome: '',    // Initialize outcome for empty now
             roundScores: initialRoundScores, // Prepare for future score integration
             fighterATotalScore: 0,
@@ -148,6 +164,7 @@ function Scorecards() {
         setFighterB('');
         setRounds('');
         setDate('');
+        setChampionship('');
     }
 
     const scorecardView = (card) => {
@@ -209,6 +226,7 @@ function Scorecards() {
                         <div onClick={() => scorecardView(card)} className="scorecard-box-container">
                             <div className="fighters-container">
                                 <p>{card.fighterA} vs. {card.fighterB}</p>
+                                <ChampionshipDisplay isChampionship={card.championship} />
                             </div>
                             <div className="rounds-container">
                                 <p>{card.rounds} Rounds</p>
@@ -261,6 +279,13 @@ function Scorecards() {
                         <br />
                         <input value={fighterB} onChange={(e) => setFighterB(e.target.value)} placeholder="Fighter B" />
                         <br />
+                        <div className="add-fight-form-champ-container">
+                            <select value={championship} onChange={(e) => setChampionship(e.target.value)} >
+                                <option value="">Championship Fight?</option>
+                                <option value="true">Yes</option>
+                                <option value="false">No</option>
+                            </select>
+                        </div>
                         <div className="add-fight-form-rds-container">
                             <select value={rounds} onChange={(e) => setRounds(e.target.value)} >
                             <option value="">Number of rounds</option>
