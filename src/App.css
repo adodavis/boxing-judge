@@ -138,28 +138,6 @@
     text-align: center;
 }
 
-.select-weight-popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: (-50%, -50%);
-    color: gray;
-    background-color: rgb(39, 37, 37);
-    border: 0.5px solid  gray;
-    padding: 20px;
-    width: 250px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.select-weight-popup select {
-    margin-bottom: 15px;
-    text-align: center;
-}
-
 .scorecard-item {
     display: flex;
     justify-content: center;
