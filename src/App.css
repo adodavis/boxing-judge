@@ -37,7 +37,7 @@
     border-radius: 5px;
 }
 
-.export-btn {
+.import-export-btn {
     background-color: transparent;
     color: white;
     font-size: 16px;
@@ -49,7 +49,7 @@
     bottom: 20px;
 }
 
-.export-btn svg {
+.import-export-btn svg {
     width: 40px;
     height: 40px;
     justify-content: center;
@@ -61,8 +61,59 @@
     z-index: 1000;
 }
 
-.export-btn svg:hover {
+.import-export-btn svg:hover {
     opacity: 1;
+}
+
+.load-save-fight-popup {
+    display: flex;
+    flex-direction: column;
+    color: gray;
+    position:fixed;
+    top: 50%;
+    left: 50%;
+    width: 340px;
+    height: 275px;
+    font-size: 15px;
+    text-align: center;
+    background-color: rgb(39, 37, 37);
+    transform: translate(-50%, -50%);
+    border-radius: 8px;
+    z-index: 1000;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    align-items: center;
+}
+
+.load-save-close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: transparent;
+    border: none;
+    font-weight: bold;
+    margin-left: 10px;
+    color: white;
+}
+
+.load-save-close-btn:hover {
+    cursor: pointer;
+}
+
+.import-btn {
+    margin-top: 40px;
+    margin-bottom: 15px;
+}
+
+.import-btn, .export-btn {
+    border-radius: 7px;
+    width: 200px;
+    background-color: rgba(83, 80, 80, 0.356);
+    border-width: 1px;
+}
+
+.import-btn:hover, .export-btn:hover {
+    cursor: pointer;
+    background-color: white;
 }
 
 .add-fight-btn button {
@@ -211,7 +262,7 @@
 .back-btn button {
     position: absolute;
     top: 55px;
-    left: 3px;
+    left: 1px;
     background-color: transparent;
     color: white;
     border: none;
@@ -219,6 +270,7 @@
     cursor: pointer;
     z-index: 1000;
     font-size: 17px;
+    margin-top: 5px;
 }
 
 .back-btn:focus {

@@ -1,6 +1,6 @@
 {
   "name": "boxing-judge",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "homepage": "https://adodavis.github.io/boxing-judge",
   "private": true,
   "dependencies": {

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useData } from "./DataContext";
 import { ReactComponent as SearchIcon } from "./search-icon.svg"
-import { ReactComponent as ExportIcon } from "./export-icon.svg"
+import { ReactComponent as ImportExportIcon } from "./import-export-icon.svg"
 import ChampionshipIcon from "./championship-icon.png"
 import "../App.css";
 
@@ -61,6 +61,7 @@ function Scorecards() {
     const [showSearchBar, setshowSearchBar] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [championship, setChampionship] = useState('');
+    const [showLoadSavePopup, setShowLoadSavePopup] = useState(false);
     const navigate = useNavigate();
 
     // Load scorecards from localStorage when the component mounts
@@ -119,6 +120,10 @@ function Scorecards() {
         }
     }, [fightData]);    // Run whenever fightData changes
 
+    const handleFightData = () => {
+        setShowLoadSavePopup(true);
+    }
+
     const handleExport = () => {
         const data = JSON.stringify(scorecards, null , 2);  // Convert scorecards to JSON with indentation
         const blob = new Blob([data], {type: 'application/json'});  // Create a Blob object from the dat
@@ -131,6 +136,32 @@ function Scorecards() {
 
         window.URL.revokeObjectURL(url); // Clean up URL object
     };
+
+    const handleImport = (event) => {
+        const file = event.target.files[0]; //Get the selected file
+
+        if (file) {
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+                try {
+                    const importedData = JSON.parse(e.target.result); // Parse the JSON data
+                    // Validate or process the imported data
+                    setScorecards((prevScorecards) => [...prevScorecards, ...(Array.isArray(importedData) ? importedData: [importedData])]); // Update scorecards state with the appended data
+                    console.log('Imported scorecards:', importedData);
+                }
+                catch (error) {
+                    console.error('Error parsing the imported file:', error);
+                }
+            };
+
+            reader.readAsText(file); // Read the file as text
+        }
+    };
+
+    const triggerFileInput = () => {
+        document.getElementById('file-input').click(); // Trigger a click on the hidden file input
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -192,9 +223,34 @@ function Scorecards() {
             </div>
 
             {/* Export button */}
-            <button onClick={handleExport} className="export-btn">
-                <ExportIcon  />
+            <button onClick={handleFightData} className="import-export-btn">
+                <ImportExportIcon  />
             </button>
+
+            {/* Load or save scorecaards */}
+            { showLoadSavePopup && (
+                <div className="load-save-fight-popup">
+                    <h2>Import/Export Scorecards</h2>
+                    <button className="import-btn" onClick={triggerFileInput}>Import Scorecards</button>
+                    <input
+                        id="file-input"
+                        type="file"
+                        accept=".json"
+                        style= { {display: "none"} } // Hide the file input
+                        onChange={handleImport}
+                    />
+                    <button className="export-btn" onClick={handleExport}>Export Scorecards</button>
+                    <button 
+                        className="load-save-close-btn"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            setShowLoadSavePopup(false);
+                        }}
+                    >
+                        X
+                    </button>
+                </div>
+            )}
 
              {/*Search section */}
              <div className="search-container">
