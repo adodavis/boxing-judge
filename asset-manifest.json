@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/boxing-judge/static/css/main.124baf47.css",
-    "main.js": "/boxing-judge/static/js/main.c464e62b.js",
+    "main.css": "/boxing-judge/static/css/main.f91f4f91.css",
+    "main.js": "/boxing-judge/static/js/main.8c6fadcc.js",
     "static/media/note-icon.svg": "/boxing-judge/static/media/note-icon.0db2fded686a5d537eef93cef6478f43.svg",
-    "static/media/export-icon.svg": "/boxing-judge/static/media/export-icon.a5f650428fa468f28496d118f6a22fc7.svg",
+    "static/media/import-export-icon.svg": "/boxing-judge/static/media/import-export-icon.a5f650428fa468f28496d118f6a22fc7.svg",
     "static/media/search-icon.svg": "/boxing-judge/static/media/search-icon.4538c67591d20f5f18238cbcfcfc24a0.svg",
     "index.html": "/boxing-judge/index.html",
-    "main.124baf47.css.map": "/boxing-judge/static/css/main.124baf47.css.map",
-    "main.c464e62b.js.map": "/boxing-judge/static/js/main.c464e62b.js.map"
+    "main.f91f4f91.css.map": "/boxing-judge/static/css/main.f91f4f91.css.map",
+    "main.8c6fadcc.js.map": "/boxing-judge/static/js/main.8c6fadcc.js.map"
   },
   "entrypoints": [
-    "static/css/main.124baf47.css",
-    "static/js/main.c464e62b.js"
+    "static/css/main.f91f4f91.css",
+    "static/js/main.8c6fadcc.js"
   ]
 }
