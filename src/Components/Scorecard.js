@@ -49,6 +49,7 @@ function Scorecard() {
    const roundScores = fightData.roundScores;
    const fighterATotalScore = fightData.fighterATotalScore;
    const fighterBTotalScore = fightData.fighterBTotalScore;
+   const winner = fightData.winner;
    const outcome = fightData.outcome;
    const [roundNotes, setRoundNotes] = useState([]);
    const [roundClose, setRoundClose] = useState([]);
@@ -57,7 +58,6 @@ function Scorecard() {
    const [noteInputValue, setNoteInputValue] = useState("");
    const [showOutcomePopup, setShowOutcomePopup] = useState(false);
    const [showWinnerPopup, setShowWinnerPopup] = useState(false);
-   const [selectedWinner, setSelectedWinner] = useState('');
    const [winnerDisplay, setWinnerDisplay] = useState('');
    const navigate = useNavigate();
 
@@ -67,7 +67,6 @@ function Scorecard() {
            const savedNotes = localStorage.getItem(`fight-${fightData.id}-notes`);
            const savedCloseRounds = localStorage.getItem(`fight-${fightData.id}-close`);
            const savedWinner = localStorage.getItem(`fight-${fightData.id}-winner`);
-           const savedWinnerDisplay = localStorage.getItem(`fight-${fightData.id}-winnerDisplay`);
            const savedOutcome = localStorage.getItem(`fight-${fightData.id}-outcome`);
            
            if (savedScores && JSON.parse(savedScores).length > 0) {
@@ -75,7 +74,7 @@ function Scorecard() {
                     ...prev,
                     roundScores: JSON.parse(savedScores)
                }));
-           } else {
+           } else if (roundScores.length === 0) {
                setFightData(prev => ({
                     ...prev,
                     roundScores: Array.from({ length: parseInt(fightData.rounds, 10) }, () => ({ fighterA: 0, fighterB: 0 }))
@@ -94,13 +93,12 @@ function Scorecard() {
                setRoundClose(Array.from({ length: parseInt(fightData.rounds, 10) }, () => false));
            }
 
-        // On component mount, load winner and winnerDisplay from localStorage
+        // On component mount, load winner and outcome from localStorage
         if (savedWinner) {
-            setSelectedWinner(JSON.parse(savedWinner));
-        }
-        
-        if (savedWinnerDisplay) {
-            setWinnerDisplay(JSON.parse(savedWinnerDisplay));
+            setFightData(prev => ({
+                ...prev,
+                winner: savedWinner
+            }));
         }
 
         if (savedOutcome) {
@@ -110,17 +108,36 @@ function Scorecard() {
             }));
         }
        }
-   }, [fightData.id, fightData.rounds, setFightData]);
+   }, [fightData.id, fightData.rounds, roundScores.length, setFightData]);
+
+   // Handle winnerDisplay after all necessary data is available
+   useEffect(() => {
+        if (winner && outcome && fighterA && fighterB) {
+            const savedWinnerDisplay = localStorage.getItem(`fight-${fightData.id}-winnerDisplay`);
+
+            if (!savedWinnerDisplay) {
+                const winnerText = winner === fighterA
+                    ? `${fighterA} ${outcome} ${fighterB}`
+                    : `${fighterB} ${outcome} ${fighterA}`;
+                
+                setWinnerDisplay(winnerText);
+            }
+            else {
+                setWinnerDisplay(savedWinnerDisplay); // Load from localStorage if present
+            }
+        }
+   }, [fightData.id, winner, outcome, fighterA, fighterB]);
 
    useEffect(() => {
        if (fightData && fightData.id && roundScores.length > 0 && roundNotes.length > 0 && roundClose.length > 0) {
            localStorage.setItem(`fight-${fightData.id}-scores`, JSON.stringify(roundScores));
            localStorage.setItem(`fight-${fightData.id}-notes`, JSON.stringify(roundNotes));
            localStorage.setItem(`fight-${fightData.id}-close`, JSON.stringify(roundClose));
-           localStorage.setItem(`fight-${fightData.id}-winner`, JSON.stringify(selectedWinner));
-           localStorage.setItem(`fight-${fightData.id}-winnerDisplay`, JSON.stringify(winnerDisplay));
+           localStorage.setItem(`fight-${fightData.id}-winner`, winner);
+           localStorage.setItem(`fight-${fightData.id}-winnerDisplay`, winnerDisplay);
+           localStorage.setItem(`fight-${fightData.id}-outcome`, outcome);
        }
-   }, [roundScores, roundNotes, roundClose, selectedWinner, winnerDisplay, fightData]);
+   }, [roundScores, roundNotes, roundClose, winner, winnerDisplay, outcome, fightData]);
 
    useEffect(() => {
        if (roundScores.length > 0) {
@@ -192,7 +209,7 @@ function Scorecard() {
 
         // If a winner is already selected, update the winnerDisplay with the new outcome
         if ((newOutcome !== outcome) && outcome !== "") {
-            const winnerText = selectedWinner === fighterA
+            const winnerText = winner === fighterA
                 ? `${fighterA} ${newOutcome} ${fighterB}`
                 : `${fighterB} ${newOutcome} ${fighterA}`;
             
@@ -201,7 +218,6 @@ function Scorecard() {
 
         if (newOutcome === "NC") {
             setWinnerDisplay("No Contest");
-            console.log('Winner Display:', winnerDisplay);
         }
 
         // Show the winner if it's a fight-ending outcome
@@ -213,10 +229,14 @@ function Scorecard() {
         }
    };
 
-   const handleWinnerChange = (winner) => {
+   const handleWinnerChange = (selectedWinner) => {
         if (selectedWinner !== winner || winnerDisplay  === "") {
-            setSelectedWinner(winner);
-            const winnerText = winner === fighterA
+            //setSelectedWinner(winner);
+            setFightData(prev => ({
+                ...prev,
+                winner: selectedWinner
+            }));
+            const winnerText = selectedWinner === fighterA
             ? `${fighterA} ${outcome} ${fighterB}`
             : `${fighterB} ${outcome} ${fighterA}`;
         

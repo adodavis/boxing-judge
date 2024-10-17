@@ -16,7 +16,8 @@ export const DataProvider = ({ children }) => {
         roundScores: [],
         outcome: "",
         fighterATotalScore: 0,
-        fighterBTotalScore: 0
+        fighterBTotalScore: 0,
+        winner: ""
     });
 
     // Log changes whenever setFightData is called

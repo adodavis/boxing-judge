@@ -108,7 +108,8 @@ function Scorecards() {
                         fighterATotalScore: fightData.fighterATotalScore,
                         fighterBTotalScore: fightData.fighterBTotalScore,
                         roundScores: fightData.roundScores,
-                        outcome: fightData.outcome
+                        outcome: fightData.outcome,
+                        winner: fightData.winner
                     };
                     return updatedScorecards;
                 }
@@ -151,7 +152,7 @@ function Scorecards() {
                     console.log('Imported scorecards:', importedData);
                 }
                 catch (error) {
-                    console.error('Error parsing the imported file:', error);
+                    console.warn('Error parsing the imported file:', error);
                 }
             };
 
@@ -188,6 +189,7 @@ function Scorecards() {
             roundScores: initialRoundScores, // Prepare for future score integration
             fighterATotalScore: 0,
             fighterBTotalScore: 0,
+            winner: ""
         }));
 
         // Clear input fields
