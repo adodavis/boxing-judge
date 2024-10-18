@@ -112,21 +112,25 @@ function Scorecard() {
 
    // Handle winnerDisplay after all necessary data is available
    useEffect(() => {
-        if (winner && outcome && fighterA && fighterB) {
-            const savedWinnerDisplay = localStorage.getItem(`fight-${fightData.id}-winnerDisplay`);
-
-            if (!savedWinnerDisplay) {
-                const winnerText = winner === fighterA
-                    ? `${fighterA} ${outcome} ${fighterB}`
-                    : `${fighterB} ${outcome} ${fighterA}`;
-                
-                setWinnerDisplay(winnerText);
-            }
-            else {
-                setWinnerDisplay(savedWinnerDisplay); // Load from localStorage if present
-            }
+        const savedWinnerDisplay = localStorage.getItem(`fight-${fightData.id}-winnerDisplay`);
+        if (savedWinnerDisplay && savedWinnerDisplay !== winnerDisplay) {
+            setWinnerDisplay(savedWinnerDisplay);
         }
-   }, [fightData.id, winner, outcome, fighterA, fighterB]);
+
+        // Check if winnerDisplay needs to be reloaded (imported scorecards)
+        const savedOutcome = localStorage.getItem(`fight-${fightData.id}-outcome`);
+        if (savedOutcome && savedWinnerDisplay === "") {
+            const winnerText = winner === fighterA
+                ? `${fighterA} ${outcome} ${fighterB}`
+                : `${fighterB} ${outcome} ${fighterA}`;
+            setWinnerDisplay(winnerText);
+        }
+   // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, []);
+
+   useEffect(() => {
+    localStorage.setItem("winnerDisplay", winnerDisplay);
+}, [winnerDisplay]); // Monitor winnerDisplay changes
 
    useEffect(() => {
        if (fightData && fightData.id && roundScores.length > 0 && roundNotes.length > 0 && roundClose.length > 0) {
@@ -230,16 +234,16 @@ function Scorecard() {
    };
 
    const handleWinnerChange = (selectedWinner) => {
-        if (selectedWinner !== winner || winnerDisplay  === "") {
-            //setSelectedWinner(winner);
+        const winnerText = selectedWinner === fighterA
+            ? `${fighterA} ${outcome} ${fighterB}`
+            : `${fighterB} ${outcome} ${fighterA}`;
+
+        if (winnerText !== winnerDisplay) {
             setFightData(prev => ({
                 ...prev,
                 winner: selectedWinner
             }));
-            const winnerText = selectedWinner === fighterA
-            ? `${fighterA} ${outcome} ${fighterB}`
-            : `${fighterB} ${outcome} ${fighterA}`;
-        
+
             setWinnerDisplay(winnerText);
         }
 
