@@ -283,7 +283,7 @@ function Scorecards() {
                     <div key={index} className="scorecard-item">
                         <div onClick={() => scorecardView(card)} className="scorecard-box-container">
                             <div className="fighters-container">
-                                <p>{card.fighterA} vs. {card.fighterB}</p>
+                                <p className="fighters-names">{card.fighterA} vs. {card.fighterB}</p>
                                 <ChampionshipDisplay isChampionship={card.championship} />
                             </div>
                             <div className="rounds-container">

@@ -234,9 +234,18 @@
     margin: 5px 0;
 }
 
-.fighters-container p {
+.fighters-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0px;
+    flex-wrap: nowrap;
+    overflow: hidden;
+}
+
+.fighters-names {
     font-weight: 600;
-    display: inline-block;
+    white-space: nowrap;
 }
 
 .result-container {
@@ -246,9 +255,10 @@
 .championship-icon {
     display: inline-block;
     vertical-align: middle;
-    margin-left: 6px;
+    margin-left: 4px;
     width: 18px;
     height: 18px;
+    flex-shrink: 0;
 }
 
 /*Containers within selected scorecards*/
@@ -270,7 +280,8 @@
     cursor: pointer;
     z-index: 1000;
     font-size: 17px;
-    margin-top: 5px;
+    margin-top: 7px;
+    margin-right: 10px;
 }
 
 .back-btn:focus {
@@ -317,6 +328,11 @@
     align-items: center;
     height: 100%;
     text-align: center;
+    white-space: nowrap;
+    font-size: 13px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 10px;
 }
 
 .button-container {
