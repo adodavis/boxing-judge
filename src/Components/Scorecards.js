@@ -132,7 +132,7 @@ function Scorecards() {
 
         const link = document.createElement('a'); // Create a hidden <a> element
         link.href = url;
-        link.download = 'scorcards.json';   // File name for download
+        link.download = 'scorecards.json';   // File name for download
         link.click(); // Trigger download
 
         window.URL.revokeObjectURL(url); // Clean up URL object
