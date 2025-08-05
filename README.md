@@ -19,4 +19,4 @@ This tool is designed for boxing enthusiasts, analysts, and aspiring judges who 
 👉 Score and record fights [here](https://adodavis.github.io/boxing-judge/)
 
 #
-This project is proprietary and not open for redistribution or reuse without explicit permission.
+**License:** This project is proprietary and not open for redistribution or reuse without explicit permission.
