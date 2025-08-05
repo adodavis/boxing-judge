@@ -17,3 +17,6 @@ Sweet Science Judge is a web-based applicatioiin for scoring boxing matches in r
 This tool is designed for boxing enthusiasts, analysts, and aspiring judges who want to score and archive fights with ease.
 
 👉 Score and record fights [here](https://adodavis.github.io/boxing-judge/)
+
+#
+This project is proprietary and not open for redistribution or reuse without explicit permission.
