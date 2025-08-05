@@ -1,5 +1,17 @@
-# Score Boxing Matches With the Sweet Science Judge Application
+# Sweet Science Judge: Boxing Scorecard App
 
-This application provides a user interface for scoring boxing matches. It is also useful for record-keeping and searching for previous fights that have been scored.
+Sweet Science Judge is a web-based applicatioiin for scoring boxing matches in real-time. It provides an intuitive user interface for entering round-by-round scores, tracking fight history, and importing/exporting scorecards for record-keeping and analyis
 
-The app includes a feature for exporting scorecards. An import feature will be added in the future.
+# Features
+
+* Clean and reponsive UI for scoring each round
+
+* Saves scored fights for future reference
+
+* Scorecard export functionality
+
+* Search previous fights by fighter name
+
+This tool is designed for boxing enthusiasts, analysts, and aspiring judges who want to score and archive fights with ease.
+
+Score and record fights [here](https://adodavis.github.io/boxing-judge/)
