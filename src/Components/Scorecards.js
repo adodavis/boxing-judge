@@ -172,6 +172,14 @@ function Scorecards() {
             return;
         }
 
+        const trimmedA = fighterA.trim();
+        const trimmedB = fighterB.trim();
+
+        if (trimmedA.length < 5 || trimmedB.length < 5) {
+            alert('Fighter names must be at least 5 characters long');
+            return;
+        }
+
         setShowAddFightPopup(false);
 
         const id = Date.now().toString(); // Generate a unique ID using the current timestamp
@@ -333,9 +341,19 @@ function Scorecards() {
                         >
                             X
                         </button>
-                        <input value={fighterA} onChange={(e) => setFighterA(e.target.value)} placeholder="Fighter A" />
+                        <input 
+                            value={fighterA} 
+                            onChange={(e) => setFighterA(e.target.value.slice(0, 20))}
+                            maxLength={20}
+                            placeholder="Fighter A" 
+                        />
                         <br />
-                        <input value={fighterB} onChange={(e) => setFighterB(e.target.value)} placeholder="Fighter B" />
+                        <input 
+                            value={fighterB} 
+                            onChange={(e) => setFighterB(e.target.value.slice(0, 20))} 
+                            maxLength={20}
+                            placeholder="Fighter B" 
+                        />
                         <br />
                         <div className="add-fight-form-champ-container">
                             <select value={championship} onChange={(e) => setChampionship(e.target.value)} >
